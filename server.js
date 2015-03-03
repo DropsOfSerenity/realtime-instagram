@@ -43,7 +43,7 @@ app.use(bodyParser.json());
 /**
  * ROUTES
  */
-app.get('/subscribe', function(request, response) {
+app.get('/callback', function(request, response) {
   var body, headers, parsedRequest;
 
   parsedRequest = url.parse(request.url, true);
