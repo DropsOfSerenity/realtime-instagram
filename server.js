@@ -35,7 +35,7 @@ try {
 }
 Instagram.subscriptions.subscribe({
   object: 'tag',
-  object_id: 'aboveandbeyond',
+  object_id: 'love',
   aspect: 'media',
   type: 'subscription',
   id: '#'
