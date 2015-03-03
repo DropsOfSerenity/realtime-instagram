@@ -37,11 +37,11 @@ io.sockets.on('connection', function (socket) {
 });
 
 // unsubscribe all then subscribe to what i want
-try {
-  Instagram.subscriptions.unsubscribe_all();
-} catch (err) {
-  console.log('w/e ');
-}
+var currentSubs = Instagram.subscriptions.list();
+currentSubs.forEach(function(sub) {
+  Instagram.subscriptions.unsubscribe({ id: sub.id });
+});
+
 Instagram.subscriptions.subscribe({
   object: 'tag',
   object_id: 'trance',

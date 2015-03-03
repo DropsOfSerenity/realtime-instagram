@@ -1,7 +1,7 @@
 'use strict';
 
 var socket = io.connect('https://instagram-realtime-test.herokuapp.com');
-var MAX_IMG_AMOUNT = 5;
+var MAX_IMG_AMOUNT = 20;
 
 socket.on('show', function(data) {
   var url = data.show;
@@ -31,8 +31,20 @@ function appendNewImage(data) {
   var nextImg = data.data[0].images.thumbnail.url;
   console.log(nextImg);
   html = '<img src="' + nextImg + '">';
+
   $('#imgWindow').prepend(html);
-  if ($('#imgWindow > img').length > MAX_IMG_AMOUNT) {
+  var last = $('#imgWindow > img:first-child');
+  var next = $('#imgWindow > img:nth-child(2)');
+
+  // if this is a dupe, remove
+  if(last.attr('src') === next.attr('src')) {
+    last.remove();
+  }
+
+  $('#imgWindow').find(':nth-child(1)').addClass('animated fadeInDown'); 
+  $('#imgWindow').find(':nth-child(2)').addClass('animated fadeInLeft');
+
+  while($('#imgWindow > img').length > MAX_IMG_AMOUNT) {
     $('#imgWindow > img').last().remove();
   }
 }
