@@ -14,9 +14,6 @@ server.listen(port);
 var request = require('request');
 var Instagram = require('instagram-node-lib');
 var url = require('url');
-var RateLimit = require('express-rate-limit');
-app.enable('trust proxy');
-
 var server_url = process.env.URL;
 
 var routes = require('./routes/index');
@@ -31,7 +28,7 @@ Instagram.set('callback_url', insta_callback_url);
 
 io.sockets.on('connection', function (socket) {
   Instagram.tags.recent({
-      name: 'love',
+      name: 'trance',
       complete: function(data) {
         socket.emit('firstLoad', { firstLoad: data });
       }
@@ -49,17 +46,10 @@ Instagram.subscriptions.list({
 
 Instagram.subscriptions.subscribe({
   object: 'tag',
-  object_id: 'love',
+  object_id: 'trance',
   aspect: 'media',
   type: 'subscription',
   id: '#'
-});
-
-var limiter = RateLimit({
-  windowMs: 1000,
-  delayMs: 1000,
-  max: 1,
-  global: false
 });
 
 /**
@@ -95,7 +85,7 @@ app.get('/callback', function(req, res) {
   Instagram.subscriptions.handshake(req, res);
 });
 
-app.post('/callback', limiter, function(req, res) {
+app.post('/callback', function(req, res) {
   var data = req.body;
   console.log(data);
 
