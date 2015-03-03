@@ -5,12 +5,16 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var port = config.PORT;
+var path = require('path');
+var logger = require('morgan');
 var io = require('socket.io').listen(app.listen(port));
 var request = require('request');
 var Instagram = require('instagram-node-lib');
 var url = require('url');
 
 var server_url = process.env.URL;
+
+var routes = require('./routes/index');
 
 /**
  * INSTAGRAM SETUP
@@ -20,6 +24,12 @@ Instagram.set('client_id', config.INSTA_CLIENT_ID);
 Instagram.set('client_secret', config.INSTA_CLIENT_SECRET);
 Instagram.set('callback_url', insta_callback_url);
 
+// unsubscribe all then subscribe to what i want
+try {
+  Instagram.subscriptions.unsubscribe_all();
+} catch (err) {
+  console.log('w/e ');
+}
 Instagram.subscriptions.subscribe({
   object: 'tag',
   object_id: 'aboveandbeyond',
@@ -38,33 +48,27 @@ io.set('transports', [
 /**
  * EXPRESS
  */
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+app.use(express.static(path.join(__dirname, 'public')));
 
 /**
  * ROUTES
  */
-app.get('/callback', function(request, response) {
-  var body, headers, parsedRequest;
 
-  parsedRequest = url.parse(request.url, true);
+app.use('/', routes);
 
-  console.log(parsedRequest);
-  if (parsedRequest['query']['hub.mode'] === 'subscribe' && (parsedRequest['query']['hub.challenge'] != null) && parsedRequest['query']['hub.challenge'].length > 0) {
-    body = parsedRequest['query']['hub.challenge'];
-    headers = {
-      'Content-Length': body.length,
-      'Content-Type': 'text/plain'
-    };
-    response.writeHead(200, headers);
-    response.write(body);
-    if ((parsedRequest['query']['hub.verify_token'] != null) && (typeof complete !== "undefined" && complete !== null)) {
-      complete(parsedRequest['query']['hub.verify_token']);
-    }
-  } else {
-    response.writeHead(400);
-  }
-  console.log(response);
-  response.end();
+app.get('/callback', function(req, res) {
+  Instagram.subscriptions.handshake(req, res);
 });
 
 app.post('/callback', function(req, res) {
