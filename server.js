@@ -37,9 +37,12 @@ io.sockets.on('connection', function (socket) {
 });
 
 // unsubscribe all then subscribe to what i want
-var currentSubs = Instagram.subscriptions.list();
-currentSubs.forEach(function(sub) {
-  Instagram.subscriptions.unsubscribe({ id: sub.id });
+Instagram.subscriptions.list({
+  complete: function(data) {
+    data.forEach(function(sub) {
+      Instagram.subscriptions.unsubscribe({ id: sub.id });
+    });
+  }
 });
 
 Instagram.subscriptions.subscribe({
