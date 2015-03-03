@@ -9,10 +9,12 @@ var io = require('socket.io').listen(app.listen(port));
 var request = require('request');
 var Instagram = require('instagram-node-lib');
 
+var url = process.env.URL;
+
 /**
  * INSTAGRAM SETUP
  */
-var insta_callback_url = 'http://127.0.0.1:' + port + '/callback';
+var insta_callback_url = url + ':' + port + '/callback';
 Instagram.set('client_id', config.INSTA_CLIENT_ID);
 Instagram.set('client_secret', config.INSTA_CLIENT_SECRET);
 Instagram.set('callback_url', insta_callback_url);
