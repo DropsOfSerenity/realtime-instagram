@@ -10,7 +10,6 @@ var logger = require('morgan');
 var server = require('http').createServer(app);
 var io      = require('socket.io').listen(server);
 server.listen(port);
-// var io = require('socket.io').listen(app.listen(port));
 var request = require('request');
 var Instagram = require('instagram-node-lib');
 var url = require('url');

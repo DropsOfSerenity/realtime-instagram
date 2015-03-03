@@ -21,30 +21,30 @@ socket.on('firstLoad', function(data) {
   imgs.forEach(function(img) {
     console.log(img);
     var nextImg = img.images.thumbnail.url;
-    var html = '<img src="' + nextImg + '">';
+    var link = img.link;
+    var html = '<a href="' + link + '"><img src="' + nextImg + '"></a>';
     $('#imgWindow').prepend(html);
   });
 });
 
 function appendNewImage(data) {
-  var html;
   var nextImg = data.data[0].images.thumbnail.url;
-  console.log(nextImg);
-  html = '<img src="' + nextImg + '">';
+  var link = data.data[0].link;
+  var html = '<a href="' + link + '"><img src="' + nextImg + '"></a>';
 
   $('#imgWindow').prepend(html);
-  var last = $('#imgWindow > img:first-child');
-  var next = $('#imgWindow > img:nth-child(2)');
+  var last = $('#imgWindow > a:first-child');
+  var next = $('#imgWindow > a:nth-child(2)');
 
   // if this is a dupe, remove
-  if(last.attr('src') === next.attr('src')) {
+  if(last.find('img').attr('src') === next.find('img').attr('src')) {
     last.remove();
   }
 
-  $('#imgWindow').find(':nth-child(1)').addClass('animated fadeInDown'); 
+  $('#imgWindow').find(':nth-child(1)').addClass('animated fadeInDown');
   $('#imgWindow').find(':nth-child(2)').addClass('animated fadeInLeft');
 
-  while($('#imgWindow > img').length > MAX_IMG_AMOUNT) {
-    $('#imgWindow > img').last().remove();
+  while($('#imgWindow > a').length > MAX_IMG_AMOUNT) {
+    $('#imgWindow > a').last().remove();
   }
 }
