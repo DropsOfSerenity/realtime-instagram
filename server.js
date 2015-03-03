@@ -14,7 +14,7 @@ var url = process.env.URL;
 /**
  * INSTAGRAM SETUP
  */
-var insta_callback_url = url + ':' + port + '/callback';
+var insta_callback_url = url + '/callback';
 Instagram.set('client_id', config.INSTA_CLIENT_ID);
 Instagram.set('client_secret', config.INSTA_CLIENT_SECRET);
 Instagram.set('callback_url', insta_callback_url);
