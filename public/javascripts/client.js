@@ -16,7 +16,8 @@ socket.on('show', function(data) {
 });
 
 socket.on('firstLoad', function(data) {
-  var imgs = data.firstLoad.slice(0, MAX_IMG_AMOUNT);
+  var reversedData = data.firstLoad.reverse();
+  var imgs = reversedData.slice(0, MAX_IMG_AMOUNT);
   $('#imgWindow > a').remove();
   imgs.forEach(function(img) {
     var nextImg = img.images.thumbnail.url;
