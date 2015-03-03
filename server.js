@@ -45,7 +45,7 @@ Instagram.subscriptions.subscribe({
  * SOCKET.IO SETUP
  */
 io.set('transports', [
-  'websocket', 'xhr-polling', 'flashsocket', 'htmlfile', 'jsonp-polling'
+  'websocket', 'xhr-polling', 'flashsocket', 'htmlfile', 'jsonp-polling', 'polling'
 ]);
 
 /**
