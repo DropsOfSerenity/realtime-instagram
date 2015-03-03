@@ -27,6 +27,15 @@ Instagram.set('client_id', config.INSTA_CLIENT_ID);
 Instagram.set('client_secret', config.INSTA_CLIENT_SECRET);
 Instagram.set('callback_url', insta_callback_url);
 
+io.sockets.on('connection', function (socket) {
+  Instagram.tags.recent({
+      name: 'trance',
+      complete: function(data) {
+        socket.emit('firstLoad', { firstLoad: data });
+      }
+  });
+});
+
 // unsubscribe all then subscribe to what i want
 try {
   Instagram.subscriptions.unsubscribe_all();
