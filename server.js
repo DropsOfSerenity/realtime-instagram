@@ -27,7 +27,7 @@ Instagram.set('callback_url', insta_callback_url);
 
 io.sockets.on('connection', function (socket) {
   Instagram.tags.recent({
-      name: 'trance',
+      name: 'love',
       complete: function(data) {
         socket.emit('firstLoad', { firstLoad: data });
       }
@@ -45,7 +45,7 @@ Instagram.subscriptions.list({
 
 Instagram.subscriptions.subscribe({
   object: 'tag',
-  object_id: 'trance',
+  object_id: 'love',
   aspect: 'media',
   type: 'subscription',
   id: '#'
