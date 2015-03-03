@@ -17,6 +17,7 @@ socket.on('show', function(data) {
 
 socket.on('firstLoad', function(data) {
   var imgs = data.firstLoad.slice(0, MAX_IMG_AMOUNT);
+  $('#imgWindow > img').remove();
   imgs.forEach(function(img) {
     console.log(img);
     var nextImg = img.images.thumbnail.url;
