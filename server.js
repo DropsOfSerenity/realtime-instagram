@@ -48,6 +48,7 @@ app.get('/subscribe', function(request, response) {
 
   parsedRequest = url.parse(request.url, true);
 
+  console.log(parsedRequest);
   if (parsedRequest['query']['hub.mode'] === 'subscribe' && (parsedRequest['query']['hub.challenge'] != null) && parsedRequest['query']['hub.challenge'].length > 0) {
     body = parsedRequest['query']['hub.challenge'];
     headers = {
