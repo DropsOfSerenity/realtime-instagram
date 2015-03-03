@@ -35,7 +35,7 @@ try {
 }
 Instagram.subscriptions.subscribe({
   object: 'tag',
-  object_id: 'love',
+  object_id: 'trance',
   aspect: 'media',
   type: 'subscription',
   id: '#'
