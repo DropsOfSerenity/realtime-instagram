@@ -1,54 +1,55 @@
 'use strict';
 
-var config = require('./config.js');
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
-var port = config.PORT;
-var path = require('path');
-var logger = require('morgan');
-var server = require('http').createServer(app);
-var io      = require('socket.io').listen(server);
-server.listen(port);
-var request = require('request');
-var Instagram = require('instagram-node-lib');
-var url = require('url');
-var server_url = process.env.URL;
+/**
+ * REQUIRES
+ */
+var bodyParser = require('body-parser'),
+  config = require('./config.js'),
+  express = require('express'),
+  path = require('path'),
+  logger = require('morgan'),
+  routes = require('./routes/index'),
+  Instagram = require('instagram-node-lib');
 
-var routes = require('./routes/index');
+/**
+ * VARS
+ */
+var server_url = process.env.URL;
+var insta_callback_url = server_url + '/callback';
+
+/**
+ * SERVER SETUP
+ */
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+server.listen(config.PORT);
 
 /**
  * INSTAGRAM SETUP
  */
-var insta_callback_url = server_url + '/callback';
 Instagram.set('client_id', config.INSTA_CLIENT_ID);
 Instagram.set('client_secret', config.INSTA_CLIENT_SECRET);
 Instagram.set('callback_url', insta_callback_url);
-
-io.sockets.on('connection', function (socket) {
-  Instagram.tags.recent({
-      name: 'trance',
-      complete: function(data) {
-        socket.emit('firstLoad', { firstLoad: data });
-      }
-  });
-});
 
 // unsubscribe all then subscribe to what i want
 Instagram.subscriptions.list({
   complete: function(data) {
     data.forEach(function(sub) {
-      Instagram.subscriptions.unsubscribe({ id: sub.id });
+      Instagram.subscriptions.unsubscribe({
+        id: sub.id
+      });
+    });
+
+    // after we've unsubbed, subscribe to applicable
+    Instagram.subscriptions.subscribe({
+      object: 'tag',
+      object_id: 'trance',
+      aspect: 'media',
+      type: 'subscription',
+      id: '#'
     });
   }
-});
-
-Instagram.subscriptions.subscribe({
-  object: 'tag',
-  object_id: 'trance',
-  aspect: 'media',
-  type: 'subscription',
-  id: '#'
 });
 
 /**
@@ -59,13 +60,10 @@ io.set('transports', [
 ]);
 
 /**
- * EXPRESS
+ * EXPRESS SETUP
  */
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -91,7 +89,6 @@ app.post('/callback', function(req, res) {
   data.forEach(function(tag) {
     var url = 'https://api.instagram.com/v1/tags/' + tag.object_id + '/media/recent?client_id=' + config.INSTA_CLIENT_ID;
     sendMessage(url);
-
   });
   res.end();
 });
@@ -101,3 +98,17 @@ function sendMessage(url) {
     show: url
   });
 }
+
+/**
+ * SOCKET TRIGGER
+ */
+io.sockets.on('connection', function(socket) {
+  Instagram.tags.recent({
+    name: 'trance',
+    complete: function(data) {
+      socket.emit('firstLoad', {
+        firstLoad: data
+      });
+    }
+  });
+});
