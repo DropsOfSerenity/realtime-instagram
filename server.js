@@ -44,7 +44,7 @@ Instagram.subscriptions.list({
     // after we've unsubbed, subscribe to applicable
     Instagram.subscriptions.subscribe({
       object: 'tag',
-      object_id: 'trance',
+      object_id: 'love',
       aspect: 'media',
       type: 'subscription',
       id: '#'
@@ -82,14 +82,20 @@ app.get('/callback', function(req, res) {
   Instagram.subscriptions.handshake(req, res);
 });
 
+var instagramTimeout;
+var acceptingMore = true;
 app.post('/callback', function(req, res) {
-  var data = req.body;
-  console.log(data);
-
-  data.forEach(function(tag) {
-    var url = 'https://api.instagram.com/v1/tags/' + tag.object_id + '/media/recent?client_id=' + config.INSTA_CLIENT_ID;
-    sendMessage(url);
-  });
+  if (acceptingMore) {
+    var data = req.body;
+    instagramTimeout = setTimeout(function() {
+      acceptingMore = true;
+    }, 1000);
+    acceptingMore = false;
+    data.forEach(function(tag) {
+      var url = 'https://api.instagram.com/v1/tags/' + tag.object_id + '/media/recent?client_id=' + config.INSTA_CLIENT_ID;
+      sendMessage(url);
+    });
+  }
   res.end();
 });
 
@@ -104,7 +110,7 @@ function sendMessage(url) {
  */
 io.sockets.on('connection', function(socket) {
   Instagram.tags.recent({
-    name: 'trance',
+    name: 'love',
     complete: function(data) {
       socket.emit('firstLoad', {
         firstLoad: data
