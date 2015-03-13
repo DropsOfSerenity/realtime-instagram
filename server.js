@@ -85,22 +85,25 @@ app.get('/callback', function(req, res) {
 var instagramTimeout;
 var acceptingMore = true;
 app.post('/callback', function(req, res) {
-  if (acceptingMore) {
-    var data = req.body;
-    instagramTimeout = setTimeout(function() {
-      acceptingMore = true;
-    }, 1000);
-    acceptingMore = false;
-    data.forEach(function(tag) {
-      var url = 'https://api.instagram.com/v1/tags/' + tag.object_id + '/media/recent?client_id=' + config.INSTA_CLIENT_ID;
-      sendMessage(url);
-    });
-  }
+  // TODO: this needs to act on a per tag basis.
+  if (!acceptingMore) return res.end();
+
+  console.log(req.body);
+
+  var data = req.body;
+  instagramTimeout = setTimeout(function() {
+    acceptingMore = true;
+  }, 1000);
+  acceptingMore = false;
+  data.forEach(function(tag) {
+    var url = 'https://api.instagram.com/v1/tags/' + tag.object_id + '/media/recent?client_id=' + config.INSTA_CLIENT_ID;
+    sendMessage(url, 'love');
+  });
   res.end();
 });
 
-function sendMessage(url) {
-  io.sockets.emit('show', {
+function sendMessage(url, tag) {
+  io.sockets.emit(tag, {
     show: url
   });
 }

@@ -3,7 +3,7 @@
 var socket = io.connect('https://instagram-realtime-test.herokuapp.com');
 var MAX_IMG_AMOUNT = 20;
 
-socket.on('show', function(data) {
+socket.on('love', function(data) {
   var url = data.show;
   $.ajax({
       url: url,
