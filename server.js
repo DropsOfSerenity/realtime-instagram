@@ -93,7 +93,7 @@ app.post('/callback', function(req, res) {
   var data = req.body;
   instagramTimeout = setTimeout(function() {
     acceptingMore = true;
-  }, 1000);
+  }, 5000);
   acceptingMore = false;
   data.forEach(function(tag) {
     var url = 'https://api.instagram.com/v1/tags/' + tag.object_id + '/media/recent?client_id=' + config.INSTA_CLIENT_ID;

@@ -22,7 +22,7 @@ socket.on('firstLoad', function(data) {
   imgs.forEach(function(img) {
     var nextImg = img.images.thumbnail.url;
     var link = img.link;
-    var html = '<a href="' + link + '"><img src="' + nextImg + '"></a>';
+    var html = '<a style="display: inline-block; min-width: 150px; min-height: 150px;" href="' + link + '"><img src="' + nextImg + '"></a>';
     $('#imgWindow').prepend(html);
   });
 });
@@ -30,21 +30,17 @@ socket.on('firstLoad', function(data) {
 function appendNewImage(data) {
   var nextImg = data.data[0].images.thumbnail.url;
   var link = data.data[0].link;
-  var html = '<a href="' + link + '"><img src="' + nextImg + '"></a>';
 
-  $('#imgWindow').prepend(html);
-  var last = $('#imgWindow > a:first-child');
-  var next = $('#imgWindow > a:nth-child(2)');
+  // find a random image
+  var random = Math.floor(Math.random() * 20);
 
-  // if this is a dupe, remove
-  if(last.find('img').attr('src') === next.find('img').attr('src')) {
-    last.remove();
-  }
+  var ele = $('#imgWindow a').eq(random);
+  ele.attr('href', link);
+  var img = ele.find('img');
 
-  $('#imgWindow').find(':nth-child(1)').addClass('animated fadeInDown');
-  $('#imgWindow').find(':nth-child(2)').addClass('animated fadeInLeft');
-
-  while($('#imgWindow > a').length > MAX_IMG_AMOUNT) {
-    $('#imgWindow > a').last().remove();
-  }
+  img.fadeOut(300, function() {
+    $(this).attr('src', nextImg).bind('onreadystatechange load', function(){
+       if (this.complete) $(this).fadeIn(300);
+    });
+  });
 }
